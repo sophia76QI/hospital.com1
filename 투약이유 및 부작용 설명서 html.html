@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>환자안전 약물카드 - 고령자 맞춤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', 'NanumGothic', '나눔고딕', 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            font-size: 22px;
+            line-height: 1.8;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border: 3px solid #2196f3;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #1565c0;
+            font-weight: 800;
+            text-shadow: 2px 2px 0px rgba(33, 150, 243, 0.1);
+        }
+
+        .header p {
+            font-size: 1.6rem;
+            color: #424242;
+            font-weight: 700;
+        }
+
+        .search-container {
+            max-width: 900px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 20px 70px 20px 25px;
+            font-size: 1.5rem;
+            font-family: 'Nanum Gothic', 'NanumGothic', '나눔고딕', 'Malgun Gothic', '맑은 고딕', sans-serif;
+            font-weight: 700;
+            border: 4px solid #2196f3;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            outline: none;
+            background: white;
+        }
+
+        .search-box:focus {
+            border-color: #1565c0;
+            box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+        }
+
+        .category-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-btn {
+            background: white;
+            color: #1565c0;
+            border: 3px solid #2196f3;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-family: 'Nanum Gothic', 'NanumGothic', '나눔고딕', 'Malgun Gothic', '맑은 고딕', sans-serif;
+            min-width: 120px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #2196f3;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .cards-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        .drug-card {
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--card-color);
+            min-height: 400px;
+        }
+
+        .drug-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .drug-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--card-color);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f5f5f5;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--card-color);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #212121;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .card-section {
+            margin-bottom: 25px;
+        }
+
+        .section-label {
+            font-weight: 800;
+            color: var(--card-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            padding: 10px 0;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--card-color);
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .section-content {
+            color: #424242;
+            line-height: 1.7;
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding-left: 24px;
+        }
+
+        .warning-section {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+            border: 3px solid #ff9800;
+            border-left: 8px solid #ff5722;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .warning-section .section-label {
+            color: #d84315;
+            font-size: 1.6rem;
+        }
+
+        .warning-section .section-content {
+            color: #d84315;
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #1565c0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 60px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #2196f3;
+        }
+
+        /* 약물별 색상 테마 - 더 선명하고 대비가 강한 색상 */
+        .drug-card[data-category*="항전간"] { --card-color: #d32f2f; }
+        .drug-card[data-category*="소염진통"] { --card-color: #1976d2; }
+        .drug-card[data-category*="정신신경"] { --card-color: #7b1fa2; }
+        .drug-card[data-category*="골격근"] { --card-color: #388e3c; }
+        .drug-card[data-category*="진경"] { --card-color: #f57c00; }
+        .drug-card[data-category*="항히스타민"] { --card-color: #00796b; }
+        .drug-card[data-category*="부정맥"] { --card-color: #e64a19; }
+        .drug-card[data-category*="이뇨"] { --card-color: #455a64; }
+        .drug-card[data-category*="혈압"] { --card-color: #c62828; }
+        .drug-card[data-category*="진해거담"] { --card-color: #2e7d32; }
+        .drug-card[data-category*="소화성"] { --card-color: #6a1b9a; }
+        .drug-card[data-category*="제산"] { --card-color: #00695c; }
+        .drug-card[data-category*="진토"] { --card-color: #bf360c; }
+        .drug-card[data-category*="이담"] { --card-color: #37474f; }
+        .drug-card[data-category*="정장"] { --card-color: #5d4037; }
+        .drug-card[data-category*="위장관"] { --card-color: #616161; }
+        .drug-card[data-category*="스테로이드"] { --card-color: #f9a825; }
+        .drug-card[data-category*="과민성방광"] { --card-color: #ad1457; }
+        .drug-card[data-category*="혈액응고"] { --card-color: #8e24aa; }
+        .drug-card[data-category*="혈전"] { --card-color: #5e35b1; }
+        .drug-card[data-category*="당뇨"] { --card-color: #d84315; }
+        .drug-card[data-category*="인슐린"] { --card-color: #ef6c00; }
+        .drug-card[data-category*="통풍"] { --card-color: #546e7a; }
+        .drug-card[data-category*="항생"] { --card-color: #43a047; }
+        .drug-card[data-category*="항진균"] { --card-color: #00838f; }
+        .drug-card[data-category*="항바이러스"] { --card-color: #0277bd; }
+        .drug-card[data-category*="마약성"] { --card-color: #c62828; }
+
+        .print-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            border: 4px solid white;
+        }
+
+        .print-btn:hover {
+            transform: scale(1.1);
+            background: #1565c0;
+            box-shadow: 0 12px 35px rgba(33, 150, 243, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+                font-size: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .drug-card {
+                padding: 25px;
+                min-height: auto;
+            }
+            
+            .card-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .card-title {
+                font-size: 1.5rem;
+            }
+            
+            .category-filters {
+                margin: 0 -10px 30px;
+                padding: 0 10px;
+            }
+            
+            .filter-btn {
+                font-size: 1rem;
+                padding: 12px 20px;
+                min-width: 100px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            .header, .search-container, .category-filters, .print-btn {
+                display: none;
+            }
+            
+            .drug-card {
+                break-inside: avoid;
+                margin-bottom: 25px;
+                border: 3px solid var(--card-color);
+                min-height: auto;
+            }
+            
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        /* 접근성 향상을 위한 고대비 모드 */
+        @media (prefers-contrast: high) {
+            .drug-card {
+                border-width: 6px;
+            }
+            
+            .section-content {
+                color: #000;
+                font-weight: 800;
+            }
+        }
+
+        /* 화면 확대 시 레이아웃 최적화 */
+        @media (min-width: 1600px) {
+            .cards-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💊 환자안전 약물카드</h1>
+        <p>복용하시는 약물에 대해 쉽고 정확하게 알아보세요</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-box" id="searchBox" placeholder="약물명을 입력해주세요 (예: 혈압약, 당뇨약, 진통제...)">
+        <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="category-filters" id="categoryFilters">
+        <button class="filter-btn active" data-filter="all">전체보기</button>
+        <button class="filter-btn" data-filter="심혈관">심장·혈관</button>
+        <button class="filter-btn" data-filter="소화기">소화기</button>
+        <button class="filter-btn" data-filter="신경">신경계</button>
+        <button class="filter-btn" data-filter="감염">감염치료</button>
+        <button class="filter-btn" data-filter="기타">기타</button>
+    </div>
+
+    <div class="cards-container" id="cardsContainer">
+        <!-- 카드들이 여기에 동적으로 생성됩니다 -->
+    </div>
+
+    <div class="no-results" id="noResults" style="display: none;">
+        🔍 검색 결과가 없습니다.<br>다른 키워드로 검색해보세요.
+    </div>
+
+    <button class="print-btn" onclick="window.print()" title="인쇄하기">🖨️</button>
+
+    <script>
+        const drugData = [
+            {
+                category: "항전간제",
+                reason: "신경통 치료, 발작 예방",
+                sideEffects: "졸음, 어지러움, 입마름",
+                warning: "피부 이상, 기분이나 행동의 변화가 나타날 경우",
+                icon: "🧠",
+                group: "신경"
+            },
+            {
+                category: "비스테로이드성 소염진통제",
+                reason: "염증을 완화시키고 통증을 줄임",
+                sideEffects: "속쓰림",
+                warning: "속쓰림이 심할때",
+                icon: "💊",
+                group: "기타"
+            },
+            {
+                category: "정신신경용제",
+                reason: "진정효과가 있으며 신경계 관련 증상을 개선",
+                sideEffects: "졸음, 어지러움, 입마름",
+                warning: "피부 이상, 기분이나 행동의 변화가 나타날 경우",
+                icon: "🧘",
+                group: "신경"
+            },
+            {
+                category: "골격근 이완제",
+                reason: "골격근을 이완시킴",
+                sideEffects: "졸음",
+                warning: "몸에 힘이 없거나 휘청거림",
+                icon: "💪",
+                group: "기타"
+            },
+            {
+                category: "진경제",
+                reason: "위장관 또는 방광의 경련 완화",
+                sideEffects: "입마름",
+                warning: "",
+                icon: "🫁",
+                group: "소화기"
+            },
+            {
+                category: "항히스타민제",
+                reason: "알레르기 질환, 가려움, 감기 증상 완화",
+                sideEffects: "졸음, 어지러움, 입마름",
+                warning: "어지러움이 심할 때",
+                icon: "🤧",
+                group: "기타"
+            },
+            {
+                category: "부정맥용제",
+                reason: "부정맥 치료",
+                sideEffects: "어지러움",
+                warning: "가슴통증, 호흡곤란, 지속적으로 심한 기침",
+                icon: "❤️",
+                group: "심혈관"
+            },
+            {
+                category: "이뇨제",
+                reason: "부종, 체액저류 감소",
+                sideEffects: "어지러움",
+                warning: "심한 구토, 설사",
+                icon: "💧",
+                group: "심혈관"
+            },
+            {
+                category: "혈압강하제",
+                reason: "혈압을 낮춤",
+                sideEffects: "졸음, 어지러움",
+                warning: "지속적인 두통, 안면홍조",
+                icon: "📈",
+                group: "심혈관"
+            },
+            {
+                category: "진해거담제",
+                reason: "가래 배출을 쉽게 해줌",
+                sideEffects: "두드러기, 편두통",
+                warning: "두두러기, 편두통이 심할 때",
+                icon: "🫁",
+                group: "기타"
+            },
+            {
+                category: "소화성 궤양용제",
+                reason: "위산의 분비를 억제하여 위식도 역류질환과 위궤양 치료",
+                sideEffects: "소화불량, 메스꺼움",
+                warning: "복통, 메스꺼움 지속",
+                icon: "🫄",
+                group: "소화기"
+            },
+            {
+                category: "제산제",
+                reason: "위산을 중화시킴",
+                sideEffects: "어지러움, 두두러기",
+                warning: "2주이상 복용해도 증상의 개선이 없는 경우",
+                icon: "⚗️",
+                group: "소화기"
+            },
+            {
+                category: "진토제",
+                reason: "구토억제",
+                sideEffects: "변비, 설사",
+                warning: "변비, 설서가 심할 때",
+                icon: "🤢",
+                group: "소화기"
+            },
+            {
+                category: "이담제",
+                reason: "담즙분비 촉진, 간보호",
+                sideEffects: "어지러움, 두드러기",
+                warning: "어지러움이 심할 때",
+                icon: "🫀",
+                group: "소화기"
+            },
+            {
+                category: "정장제",
+                reason: "장내 미생물을 정상적으로 조절",
+                sideEffects: "어지러움, 두드러기",
+                warning: "어지러움이 심할 때",
+                icon: "🦠",
+                group: "소화기"
+            },
+            {
+                category: "위장관운동 조절제",
+                reason: "구토, 메스꺼움 치료",
+                sideEffects: "어지러움, 두드러기",
+                warning: "어지러움이 심할 때",
+                icon: "🔄",
+                group: "소화기"
+            },
+            {
+                category: "경구용 스테로이드제",
+                reason: "만성염증, 알러지 질환 치료",
+                sideEffects: "속쓰림",
+                warning: "속 쓰림이 심할 때",
+                icon: "💉",
+                group: "기타"
+            },
+            {
+                category: "과민성방광 치료제",
+                reason: "빈뇨, 요실금, 요절박 같은 과만성 방광 증상 치료",
+                sideEffects: "입마름",
+                warning: "입마름이 심할 때",
+                icon: "🚻",
+                group: "기타"
+            },
+            {
+                category: "혈액응고저지제",
+                reason: "불필요한 혈전이 생기지 않게 함",
+                sideEffects: "코피, 잇몸 출혈, 멍",
+                warning: "피가 멎지 않음, 소변, 대변에 피가 섞임",
+                icon: "🩸",
+                group: "심혈관"
+            },
+            {
+                category: "혈전생성억제",
+                reason: "혈전이 생기는 것을 예방",
+                sideEffects: "코피, 잇몸 출혈, 멍",
+                warning: "피가 멎지 않음, 소변, 대변에 피가 섞임",
+                icon: "🔴",
+                group: "심혈관"
+            },
+            {
+                category: "당뇨병용제",
+                reason: "혈당을 낮춤",
+                sideEffects: "식은땀, 현기증",
+                warning: "저혈당 증상 (식은 땀, 현기증, 떨림 등)",
+                icon: "🍯",
+                group: "기타"
+            },
+            {
+                category: "인슐린주사제",
+                reason: "혈당을 낮춤",
+                sideEffects: "식은땀, 현기증",
+                warning: "저혈당 증상 (식은 땀, 현기증, 떨림 등)",
+                icon: "💉",
+                group: "기타"
+            },
+            {
+                category: "통풍치료제",
+                reason: "혈중 요산 수치를 낮춤, 통풍 발작을 예방",
+                sideEffects: "소화불량, 메스꺼움",
+                warning: "지속적인 두통, 설사 메스꺼움, 피부발진",
+                icon: "🦴",
+                group: "기타"
+            },
+            {
+                category: "항생제",
+                reason: "세균에 의한 감염증 치료",
+                sideEffects: "설사",
+                warning: "복통, 지속적인 설사, 혈변",
+                icon: "🦠",
+                group: "감염"
+            },
+            {
+                category: "항진균제",
+                reason: "곰팡이균에 의한 감염증 치료",
+                sideEffects: "소화불량, 메스꺼움",
+                warning: "지속적인 메스꺼움, 구토, 식욕부진",
+                icon: "🍄",
+                group: "감염"
+            },
+            {
+                category: "항바이러스제",
+                reason: "바이러스에 의한 감염증 치료",
+                sideEffects: "소화불량, 메스꺼움",
+                warning: "지속적인 메스꺼움, 구토, 식욕부진",
+                icon: "🔬",
+                group: "감염"
+            },
+            {
+                category: "마약성진통제",
+                reason: "통증 완화",
+                sideEffects: "졸음, 어지러움, 메스꺼움, 변비",
+                warning: "호흡곤란",
+                icon: "⚡",
+                group: "기타"
+            }
+        ];
+
+        let filteredData = [...drugData];
+
+        function createCard(drug) {
+            return `
+                <div class="drug-card" data-category="${drug.category}" data-group="${drug.group}">
+                    <div class="card-header">
+                        <div class="card-icon">${drug.icon}</div>
+                        <div class="card-title">${drug.category}</div>
+                    </div>
+                    
+                    <div class="card-section">
+                        <div class="section-label">💡 투약이유</div>
+                        <div class="section-content">${drug.reason}</div>
+                    </div>
+                    
+                    <div class="card-section">
+                        <div class="section-label">⚠️ 나타날 수 있는 증상</div>
+                        <div class="section-content">${drug.sideEffects}</div>
+                    </div>
+                    
+                    ${drug.warning ? `
+                        <div class="warning-section">
+                            <div class="section-label">🚨 즉시 알려주세요!</div>
+                            <div class="section-content">${drug.warning}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('cardsContainer');
+            const noResults = document.getElementById('noResults');
+            
+            if (data.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+            } else {
+                container.innerHTML = data.map(createCard).join('');
+                noResults.style.display = 'none';
+            }
+        }
+
+        function filterCards(searchTerm, category) {
+            filteredData = drugData.filter(drug => {
+                const matchesSearch = !searchTerm || 
+                    drug.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    drug.reason.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    drug.sideEffects.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                const matchesCategory = category === 'all' || drug.group === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderCards(filteredData);
+        }
+
+        // 검색 기능
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            filterCards(searchTerm, activeFilter);
+        });
+
+        // 카테고리 필터
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const category = e.target.dataset.filter;
+                const searchTerm = document.getElementById('searchBox').value;
+                filterCards(searchTerm, category);
+            });
+        });
+
+        // 초기 렌더링
+        renderCards(drugData);
+
+        // 카드 클릭 이벤트 - 고령자를 위한 더 명확한 피드백
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.drug-card')) {
+                const card = e.target.closest('.drug-card');
+                // 클릭 시 살짝 확대되는 효과로 선택 피드백 제공
+                card.style.transform = card.style.transform === 'scale(1.05)' ? 'scale(1)' : 'scale(1.05)';
+                setTimeout(() => {
+                    card.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+
+        // 키보드 접근성 향상
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target.classList.contains('filter-btn')) {
+                e.target.click();
+            }
+        });
+    </script>
+</body>
+</html>
